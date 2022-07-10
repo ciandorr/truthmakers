@@ -1,0 +1,71 @@
+digraph G { rankdir = BT; 
+subgraph cluster_impossible {
+color=blue;    
+"rb|r,g,b"->"rgb|r,g,b";
+"rg|r,g,b"->"rgb|r,g,b";
+"rg,rb,gb|r,g,b"->"rg,rb|r,g,b";
+"rg,rb|r,g,b"->"rg|r,g,b";
+"rb,gb|r,g,b"->"rb|r,g,b";
+"rg,rb,gb|r,g,b"->"rg,gb|r,g,b";
+"rg,rb,gb|r,g,b"->"rb,gb|r,g,b";
+"rg,gb|r,g,b"->"gb|r,g,b";
+"rg,rb|r,g,b"->"rb|r,g,b";
+"rg,gb|r,g,b"->"rg|r,g,b";
+"gb|r,g,b"->"rgb|r,g,b";
+label = "Impossibilities";
+}
+
+subgraph cluster_necessary {
+color=blue;
+"r,g,b|rgb"->"r,g,b|rg";
+"r,g,b|rb"->"r,g,b|rg,rb";
+"r,g,b|gb"->"r,g,b|rb,gb";
+"r,g,b|rg,rb"->"r,g,b|rg,rb,gb";
+"r,g,b|rg,gb"->"r,g,b|rg,rb,gb";
+"r,g,b|rgb"->"r,g,b|gb";
+"r,g,b|rg"->"r,g,b|rg,rb";
+"r,g,b|rb,gb"->"r,g,b|rg,rb,gb";
+"r,g,b|rg"->"r,g,b|rg,gb";
+"r,g,b|rb"->"r,g,b|rb,gb";
+"r,g,b|gb"->"r,g,b|rg,gb";
+label = "Necessities";
+}
+subgraph cluster_r {
+"r,gb|g,b"->"r|g,b";
+}
+subgraph cluster_g {
+"g,rb|r,b"->"g|r,b";
+}
+subgraph cluster_b {
+"b,rg|r,g"->"b|r,g";
+}
+subgraph cluster_r_b{
+"r,b|g"->"r,b|g,rb";
+}
+subgraph cluster_r_g{
+"r,g|b"->"r,g|b,rg";
+}
+subgraph cluster_g_b{
+"g,b|r"->"g,b|r,gb";
+}
+"r,b|g,rb"->"r,gb|g,b";
+"g|r,b"->"rg,gb|r,g,b";
+"rb,gb|r,g,b"->"gb|r,g,b";
+"b,rg|r,g"->"rg,rb,gb|r,g,b";
+"b|r,g"->"rb,gb|r,g,b";
+"r,g|b,rg"->"g,rb|r,b";
+"r,g,b|rgb"->"r,g,b|rb";
+"r,g|b,rg"->"r,gb|g,b";
+"r,gb|g,b"->"rg,rb,gb|r,g,b";
+"g,b|r,gb"->"b,rg|r,g";
+"r,g,b|rg,rb,gb"->"g,b|r,gb";
+"g,rb|r,b"->"rg,rb,gb|r,g,b";
+"r,b|g,rb"->"b,rg|r,g";
+"r,g,b|rg,rb"->"g,b|r";
+"r|g,b"->"rg,rb|r,g,b";
+"r,g,b|rg,rb,gb"->"r,b|g,rb";
+"g,b|r,gb"->"g,rb|r,b";
+"r,g,b|rb,gb"->"r,g|b";
+"r,g,b|rg,gb"->"r,b|g";
+"r,g,b|rg,rb,gb"->"r,g|b,rg";
+}
