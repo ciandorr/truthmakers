@@ -3,6 +3,7 @@ from functools import reduce
 from tqdm import tqdm
 import networkx as nx
 
+
 #printout to stderr - I added since it was slow and I wanted feedback while running
 
 def eprint(*args, **kwargs):
