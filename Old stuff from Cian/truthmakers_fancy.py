@@ -138,6 +138,27 @@ def disjclose(c):
 def close(c):
     return(disjclose(conjclose(negclose(c))))
 
+def betterclose(c):
+    n = 0
+    while n < len(c):
+        newneg = negate(c[n])
+        if not (newneg in c):
+            c.append(newneg)
+            eprint(f"{len(c)}: {propasstring(new)}= ~{n}", end="\r")
+        m = 0
+        while m < n:
+            newconj = conjoin(c[m], c[n])
+            newdisj = disjoin(c[m], c[n])
+            if not (newconj in c):
+                c.append(new)
+                eprint(f"{len(c)}: {propasstring(new)} = {n} ^ {m}", end="\r")
+            if not (newdisj in c):
+                c.append(new)
+                eprint(f"{len(c)}: {propasstring(new)} = {n} v {m}", end="\r")
+            m = m+1
+        n = n+1
+    return c
+
 # We could also close under all three operations simultaneously (looping through as in the definition of conjclose(c), but adding disjunctions and negations as well as conjunctions when they aren't already in c); I don't think this would be much slower, and in some other settings (e.g. if we were working with arbitrary sets of states, or pairs of sets of states, rather than regular sets), we'd need to do it that way.  The only reason I did 'conjunctions and negations first' was because I was interested in seeing how many of the final list of propositions could be made just from those two operations. In the next version, I'd like to have a flexible 'close' function that takes a list c, a list of unary operations, and a list of binary functions, and closes c under all of the given unary operations and binary operations.  
 
 # Next, we have some utility functions for helping to analyse the rather large list of generated propositions.  This one sifts out the special bilateral propositions of the form <{x},Y>, i.e. where the verifier set is a singleton.  Because we are coding regular sets as pairs of an antichain and a state that's above everything in the antichain, this is equivalent to the second element being in the first element.
@@ -463,3 +484,30 @@ if __name__ == '__main2__':
 #     for f in falsifiers:
 #         str = str+" "+("".join(f))
 #     print str
+
+
+
+
+
+
+
+# WHAT IS A REGULAR (UNILATERAL) PROPOSITION?
+
+# Fine's definition:
+#   (a) X is *closed* := x⊔y ∈ X whenever x∈X and y∈X.
+#    (b) X is *convex* := y∈ X whenever x≤y, y≤z, x∈X, and z∈X
+#   (c) X is *regular* := X is convex and closed.
+#
+# An alternative definition that turns out to be equivalent:
+#    (i) X is *upward closed* iff y∈X whenever x≤y and x∈X.
+#    (ii) ↓y = {z:z≤y}
+#    (iii) X is *regular* iff for some upward closed Y and some z, X = Y ∩ ↓z.
+#
+# Proof that these are equivalent.
+#
+#  1. suppose that X is regular according to the first definition.  Let x ∈ sup X (i.e. the fusion of all elements of X).  Let ↑X be the upward closure of X, i.e. {y|x≤y for some x∈X}.  Obviously ↑X is upward closed.  I claim that X = ↑X ∩ ↓x.  
+#
+#   Suppose y∈X; then y∈↑X; also y∈x since x is the fusion of all elements of X.  So y ∈ ↑X ∩ ↓x.
+#   Suppose y∈ ↑X ∩ ↓x.  Then there exists z∈X such that z≤y.  Also x∈X since X is closed.  So y is between two elements of X, so y∈X since X is convex.  
+#
+# 2. Suppose that X is regular according to the second definition.  Then X is closed and convex, since every upset is obviously closed and convex, and every downset is too, so the intersection of any upset with any downset is.  
