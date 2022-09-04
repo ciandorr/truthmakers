@@ -11,7 +11,8 @@ def eprint(*args, **kwargs):
     
 from itertools import *
 
-# In this code, *states* are frozensets, fusion is union, and parthood is subset.  (We have to use frozensets, not sets, because we want them to be included in tuples which need to be hashable to be included in further sets.)  So:
+# In this code, *states* are frozensets, fusion is union, and parthood is subset.  
+# (We have to use frozensets, not sets, because we want them to be included in tuples which need to be hashable to be included in further sets.)  So:
 
 def fuse(pair):
     return pair[0] | pair[1] # we take a tuple as argument rather than two arguments so that we can use 'map', as in the definition of bottomwedge below.
@@ -19,7 +20,9 @@ def fuse(pair):
 def isproperpart(first, second):
     return first.issubset(second) and (first != second)
 
-# This code is about *regular, bilateral propositions* - ordered pairs of regular sets of states.  But instead of actually working with the regular sets of states, we will represent each regular set X in turn as an ordered pair of a set of states X- and a single state X+.  X- is the set of states in X that have no proper part in X (so it's an 'antichain' in mathematical parlance); X+ is just a state, the top element in X.  
+# This code is about *regular, bilateral propositions* - ordered pairs of regular sets of states.  But instead of actually working with the regular sets of states, 
+# we will represent each regular set X in turn as an ordered pair of a set of states X- and a single state X+.  
+# X- is the set of states in X that have no proper part in X (so it's an 'antichain' in mathematical parlance); X+ is just a state, the top element in X.  
 
 # To use this coding, we'll need the following funciton that takes a set of states X and returns X-, the subset containing just the minimal elements of X.
 
@@ -35,7 +38,8 @@ def minimize(stateset):
         n = n+1
     return frozenset(listset)
 
-# This is code I was using before that takes an arbitrary set of states and returns the smallest regular set containing that set.  I don't think I'm actually using it in this particular code.  
+# This is code I was using before that takes an arbitrary set of states and returns the smallest regular set containing that set.  
+#    I don't think I'm actually using it in this particular code.  
 
 def regclose(prop):
     listset = sorted(prop)
@@ -53,7 +57,10 @@ def regclose(prop):
                 listset.append(new)
     return frozenset(listset)
 
-# Since we are coding regular sets of states as ordered pairs of an antichain and a state, the operations of "wedge" and "vee" on regular sets need to be transferred to this coding.  The following operation takes two antichains X- and Y- and spits back the set of minimal elements in X ∧ Y (where X and Y could be any regular sets that have X- and Y- as their minimal elements).
+# Since we are coding regular sets of states as ordered pairs of an antichain and a state, 
+# the operations of "wedge" and "vee" on regular sets need to be transferred to this coding.  
+# The following operation takes two antichains X- and Y- and spits back the set of minimal elements in X ∧ Y 
+# (where X and Y could be any regular sets that have X- and Y- as their minimal elements).
     
 def bottomwedge(first, second):
     return minimize(map(fuse, product(first, second)))
@@ -88,7 +95,10 @@ def disjoin(first, second):
 def negate(x):
     return (x[1], x[0])
 
-# OK.  Now, what we're actually going to do in this particular file is to start with some small set of bilateral propositions and use it to generate a bigger set containing all of the bilateral propositions we can get from the starting set by successively applying the three operations of conjunction, disjunction, and negation as defined above.  So, we define three functions that take a list of propositions as input and output a bigger list containing everything we can make from the input using one of these three operations.
+# OK.  Now, what we're actually going to do in this particular file is to start with some small set of bilateral propositions and use it to generate a bigger 
+# set containing all of the bilateral propositions we can get from the starting set by successively applying the three operations of 
+#  conjunction, disjunction, and negation as defined above.  So, we define three functions that take a list of propositions as input and output a bigger list containing 
+# everything we can make from the input using one of these three operations.
 
 # First, negation:
 
@@ -139,7 +149,12 @@ def disjclose(c):
 def close(c):
     return(disjclose(conjclose(negclose(c))))
 
-# We could also close under all three operations simultaneously (looping through as in the definition of conjclose(c), but adding disjunctions and negations as well as conjunctions when they aren't already in c); I don't think this would be much slower, and in some other settings (e.g. if we were working with arbitrary sets of states, or pairs of sets of states, rather than regular sets), we'd need to do it that way.  The only reason I did 'conjunctions and negations first' was because I was interested in seeing how many of the final list of propositions could be made just from those two operations. In the next version, I'd like to have a flexible 'close' function that takes a list c, a list of unary operations, and a list of binary functions, and closes c under all of the given unary operations and binary operations.  
+# We could also close under all three operations simultaneously (looping through as in the definition of conjclose(c), 
+# but adding disjunctions and negations as well as conjunctions when they aren't already in c); I don't think this would be much slower, and in some other settings 
+# (e.g. if we were working with arbitrary sets of states, or pairs of sets of states, rather than regular sets), we'd need to do it that way.  
+# The only reason I did 'conjunctions and negations first' was because I was interested in seeing how many of the final list of propositions could be made just from those two operations. 
+# In the next version, I'd like to have a flexible 'close' function that takes a list c, a list of unary operations, 
+# and a list of binary functions, and closes c under all of the given unary operations and binary operations.  
 
 # Next, we have some utility functions for helping to analyse the rather large list of generated propositions.  This one sifts out the special bilateral propositions of the form <{x},Y>, i.e. where the verifier set is a singleton.  Because we are coding regular sets as pairs of an antichain and a state that's above everything in the antichain, this is equivalent to the second element being in the first element.
 
@@ -215,7 +230,8 @@ def Mreorganise(props):
 #    result = result.sort(key = first)
     return result
 
-# Here are a few more operations used for probing the final list of bilateral propositions.  This one takes a list of propositions and spits back the results of conjoining all of them with a given proposition:
+# Here are a few more operations used for probing the final list of bilateral propositions.  
+# This one takes a list of propositions and spits back the results of conjoining all of them with a given proposition:
 
 def closewithconj(props,conjunct):
     return set([conjoin(prop,conjunct) for prop in props])
@@ -236,7 +252,8 @@ def fulltop(props):
 def fullbottom(props):
     return reduce(disjoin, [conjoin(prop,negate(prop)) for prop in props])
 
-# Now we have a bunch of functions which we use to output things as strings.  If we were redoing this code in a more object-oriented way, I guess that these would be 'repr' methods on the various sorts of objects.
+# Now we have a bunch of functions which we use to output things as strings. 
+#  If we were redoing this code in a more object-oriented way, I guess that these would be 'repr' methods on the various sorts of objects.
 
 # A state is a frozenset of letters: we output it as a string (e.g. 'r' or 'rgb'), sorting the letters in reverse order so we get 'rgb' not 'bgr'.
 
@@ -272,7 +289,8 @@ def Lpropasstring(prop):
 def flatformat(mylist):
     return "\n".join([propasstring(prop) for prop in mylist])
 
-# This one is for giving a string representation of the more useful lists outputted by the 'reorganize' functions above.  The first one is for Lreorganize, the second for Mreorganize.  
+# This one is for giving a string representation of the more useful lists outputted by the 'reorganize' functions above.  
+# The first one is for Lreorganize, the second for Mreorganize.  
            
 def formatbilist(mylist):
     result = ""
@@ -293,16 +311,19 @@ def formatbilistII(mylist):
 def formatproplist(mylist):
     return "\n".join([propasstring(prop) for prop in mylist])
 
-# Next, we have some functions for *inputting* things as strings.  If we did all this in an object-oriented way, I guess these would all be coded into the __init__ method of the objects.
+# Next, we have some functions for *inputting* things as strings.  
+# If we did all this in an object-oriented way, I guess these would all be coded into the __init__ method of the objects.
 
-# Right now there's some inconsistency in the inputs and outputs which seems bad - better to set things up so that we can go back and forth freely between each kind of thing and its string representation.
+# Right now there's some inconsistency in the inputs and outputs which seems bad - better to set things up so that we can go back 
+# and forth freely between each kind of thing and its string representation.
 
 # a state is given just by a string, e.g. 'rgb', which we turn into the frozenset of its letters:
 
 def statefromstring(string):
     return frozenset(string)
 
-# a set of states is given by a space-separated list of strings.  Here, for some reason, I 'minimize' the result to make sure that it's an antichain - this shouldn't really be in this function.
+# a set of states is given by a space-separated list of strings. 
+#  Here, for some reason, I 'minimize' the result to make sure that it's an antichain - this shouldn't really be in this function.
 
 def statesetfromstring(string):
     states = string.split(' ')
@@ -325,7 +346,11 @@ def propfromstring(string):
 def propsfromlist(props):
     return [propfromstring(prop) for prop in props]
 
-# Now we have some functions whose purpose in this code is to help us output things as nice looking Hasse diagrams.  For this, we don't just need a list/set of propositions (or whatevers), we need some relation ≤ on the elements of the list - e.g. ≤_∧ or ≤_∨.  We represent this relation as a Digraph.  It would probably be more efficient to construct this in tandem with the list of propositions rather than afterwards.  Also, the approach here where we first code the entire transitive relation ≤ and then take its transitive reduction (which is what's actually used to display the Hasse diagram) seems a bit wasteful - it might be better to work with the transitive reduction from the get go.  
+# Now we have some functions whose purpose in this code is to help us output things as nice looking Hasse diagrams. 
+#  For this, we don't just need a list/set of propositions (or whatevers), we need some relation ≤ on the elements of the list - e.g. ≤_∧ or ≤_∨. 
+#  We represent this relation as a Digraph.  It would probably be more efficient to construct this in tandem with the list of propositions rather than afterwards.  
+# Also, the approach here where we first code the entire transitive relation ≤ and then take its transitive reduction 
+# (which is what's actually used to display the Hasse diagram) seems a bit wasteful - it might be better to work with the transitive reduction from the get go.  
 
 # Here are the two tests we'll use, depending on whether we're interested in ≤_∧ or ≤_∨:
 
@@ -348,12 +373,14 @@ def posetfromlist(list, test, wrapper = lambda x: x):
     eprint('Done making poset')
     return poset
 
-# Networkx turned out to have a built in function for taking transitive reductions.  If we decide we'll be using transitive reductions from the beginning, we won't need this step.  
+# Networkx turned out to have a built in function for taking transitive reductions.  
+# If we decide we'll be using transitive reductions from the beginning, we won't need this step.  
 
 def detransitivize(poset):
     return nx.transitive_reduction(poset)
 
-# This is some code for outputting the transitively-reduce Digraph as a Graphviz .dot file, based on something I found online (https://gist.github.com/mapio/c44c029a1c1a5ff1ab59).  I didn't know about the pydot package which has a built in facility for this. 
+# This is some code for outputting the transitively-reduce Digraph as a Graphviz .dot file,
+#  based on something I found online (https://gist.github.com/mapio/c44c029a1c1a5ff1ab59).  I didn't know about the pydot package which has a built in facility for this. 
 
 def stringify(graph):
     return [(Lpropasstring(edge[0]),Lpropasstring(edge[1])) for edge in graph.edges] #the particular graph I was trying to make here was just showing the L-equivalence classes, hence the Lpropasstring.  But in our code we'll also be interested in graphs that show the full proposiiton, graphs of states, etc.  
@@ -369,9 +396,13 @@ def to_dot( E ):
 
 # INPUT
 
-# the next part of the file is where I was playing around with different starting sets of bilateral propositions, where in each case I was interested in seeing what would fall out when I took the closure of the starting set using the `close`  function (see above).  Because I didn't know about Jupyter notebooks, I was just editing this file and commenting different things out.  I'm leaving it in here to give a sense of the kind of exploration we're interested in:
+# the next part of the file is where I was playing around with different starting sets of bilateral propositions, 
+# where in each case I was interested in seeing what would fall out when I took the closure of the starting set using the `close`  function (see above).  
+# Because I didn't know about Jupyter notebooks, I was just editing this file and commenting different things out.  
+# I'm leaving it in here to give a sense of the kind of exploration we're interested in:
 
-#the original - this generates the set of bilateral propositions whose L-equivalence classes are graphed in the Hasse diagram that says 'original' in the slides.  This example is important for Fine: we start with three bilateral propositions, where each of them has a single verifier (r, g, b).  
+#the original - this generates the set of bilateral propositions whose L-equivalence classes are graphed in the Hasse diagram that says 'original' in the slides.  
+# This example is important for Fine: we start with three bilateral propositions, where each of them has a single verifier (r, g, b).  
 atoms1 = propsfromlist(['r;r|g b;gb','g;g|r b;rb','b;b|r g;rg'])
 
 #A variant where the starting propositions are upward closed on both sides.  If all we're interested in is the L-equivalence classes, this is equivalent to the previous.  
@@ -386,7 +417,8 @@ atoms4 = propsfromlist(['r;rgb|gb;rgb','g;rgb|rb;rgb','b;rgb|rg;rgb'])
 #Here's asymmetric variant of the original where two of the three atoms are compossible
 atoms5 = propsfromlist(['r;r|b;b','g;g|b;b','b;b|r g;rg'])
 
-#Now we see what happens when we have 4 atomic states r, g, b, y rather than 3.  (These get very slow.).  First we have an analogue of atoms1 where the four atomic states are "mutually exclusive":
+#Now we see what happens when we have 4 atomic states r, g, b, y rather than 3.  (These get very slow.). 
+#  First we have an analogue of atoms1 where the four atomic states are "mutually exclusive":
 atoms6 = propsfromlist(['r;r|g b y;gby','g;g|r b y;rby','b;b|r g y;rgy','y;y|r g b;rgb'])
 
 #4 atoms; any two are compossible
@@ -410,19 +442,25 @@ atoms11 = propsfromlist(['r;r|gb gy gz by bz yz;gbyz','g;g|rb ry rz by bz yz;rby
 atoms12 = propsfromlist(['r;r|gby gbz gyz byz;gbyz','g;g|rby rbz ryz byz;rbyz','b;b|rgy rgz ryz gyz yz;rgyz','y;y|rgb rgz rbz gbz bz;rgbz','z;z|rgb rgy rby gby;rgby'])
 
 atoms = atoms1  # edit this line depending on what starting atoms you want - or add new ones....
+print(atoms)
+#Lastly, we have two different functions which I wanted to be able to rename to __main__ so I could call them by running this file in the terminal. 
+#  The first one is for generating a Graphviz file showing the ≤_∧ relation on the generated set of propositions close(atoms):
 
-#Lastly, we have two different functions which I wanted to be able to rename to __main__ so I could call them by running this file in the terminal.  The first one is for generating a Graphviz file showing the ≤_∧ relation on the generated set of propositions close(atoms):
-
-if __name__ == '__main1__':
+if __name__ == '__main__':
     propositions = close(atoms)
-    eprint(f"{len(propositions)} propositions") # comment out if you don't want stuff on stderr
+    # print(propositions)
+    # eprint(f"{len(propositions)} propositions") # comment out if you don't want stuff on stderr
     pairs = posetfromlist(propositions,isconjunct) # as mentioned above, would be more efficient to construct the poset as we go
     hasse = detransitivize(pairs) # also as mentioned above, would probably be more efficient to keep it transitively-reduced as we construct it
     has = stringify(hasse) 
     dot = to_dot(has)
-    print(dot)  # I was just printing the dot to the terminal and then cutting-and-pasting it into Graphviz because I couldn't remember how to output files to disk in Python and I couldn't be bothered learning.  We'll instead want to show our graphs in our Jupyter notebook.  
+    # print(dot)  
+# I was just printing the dot to the terminal and then cutting-and-pasting it into Graphviz because I couldn't remember how to output files to disk in Python and I couldn't be bothered learning. 
+# We'll instead want to show our graphs in our Jupyter notebook.  
     
-# This one is just spitting out a big lot of string output showing the generated set of propositions, presented in different ways.  My original MO was to copy the bit of the string output I was interested, paste it into a spreadsheet, and just sort of stare at it.  This was slow and not very illuminating, which is why I started making the graphs; still, it's good to have the possibility of staring at the lists.  
+# This one is just spitting out a big lot of string output showing the generated set of propositions, presented in different ways.  
+# My original MO was to copy the bit of the string output I was interested, paste it into a spreadsheet, and just sort of stare at it.  
+# This was slow and not very illuminating, which is why I started making the graphs; still, it's good to have the possibility of staring at the lists.  
 
 if __name__ == '__main2__':
     states = conjclose(atoms) # first we make all the "state propositions", i.e. the ones we can get from the input 'atoms' by conjunction:
