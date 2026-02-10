@@ -1,5 +1,6 @@
 # Core dependencies
 networkx>=2.6
+tqdm>=4.0
 
 # Visualization (for Jupyter notebook apps)
 plotly>=5.0
