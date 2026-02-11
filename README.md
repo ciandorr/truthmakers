@@ -1,5 +1,7 @@
 # Truthmaker Semantics Visualization
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ciandorr/truthmakers/blob/main/truthmaker_viz.ipynb)
+
 An interactive Python toolkit for exploring Kit Fine's bilateral truthmaker semantics with modern Plotly/Dash visualizations in Jupyter notebooks.
 
 ## Overview
