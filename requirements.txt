@@ -5,6 +5,7 @@ tqdm>=4.0
 # Visualization (for Jupyter notebook apps)
 plotly>=5.0
 dash>=2.0
+jupyter-server-proxy>=3.0
 
 # For running tests
 pytest>=7.0
